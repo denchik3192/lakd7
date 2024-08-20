@@ -1,31 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
+import { useMemo, useState } from 'react';
 import './App.css';
-import Map from './Components/Map';
-import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
+import { FeatureGroup, MapContainer, Popup, Rectangle, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import markerIconPng from 'leaflet/dist/images/marker-icon.png';
-import { Icon } from 'leaflet';
 
 function App() {
+  const [innerBounds, setsetBounds] = useState<any>([
+    [51.505, -0.09],
+    [51.55, -0.18],
+  ]);
+  const innerHandlers = useMemo(
+    () => ({
+      click() {
+        setsetBounds(innerBounds);
+      },
+    }),
+    [innerBounds],
+  );
   return (
     <div className="App">
       <MapContainer
         center={[51.505, -0.09]}
-        zoom={13}
+        zoom={12}
         scrollWheelZoom={true}
         style={{ height: '500px' }}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker
-          position={[51.505, -0.09]}
-          icon={new Icon({ iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41] })}>
-          <Popup>
-            A pretty CSS3 popup. <br /> Easily customizable.
-          </Popup>
-        </Marker>
+        <FeatureGroup pathOptions={{ color: 'red' }}>
+          <Popup>Coordinates: {innerBounds[0] + innerBounds[1]}</Popup>
+          <Rectangle bounds={innerBounds} eventHandlers={innerHandlers} />
+        </FeatureGroup>
       </MapContainer>
     </div>
   );
